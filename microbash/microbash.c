@@ -262,7 +262,7 @@ check_t check_redirections(const line_t *const l)
 	/*** TO BE DONE START ***/
 	for (int i = 0; i < l->n_commands; i++)
 	{
-		if (strcmp(l->commands[i]->args[0], CD) != 0) /// SEBA E ANDRE questo non serve
+		if (strcmp(l->commands[i]->args[0], CD) != 0)
 		{
 			if ((i != 0 && l->commands[i]->in_pathname != NULL) ||
 				(i != l->n_commands - 1 && l->commands[i]->out_pathname != NULL))
@@ -287,37 +287,29 @@ check_t check_cd(const line_t *const l)
 	 * message and return CHECK_FAILED otherwise
 	 */
 	/*** TO BE DONE START ***/
-	debug("quanti comandi ha cd? %d\n", l->n_commands);
-	debug("quanti argomenti ha cd? %d\n", l->commands[0]->n_args);
-	debug("primo argomento? %s\n", l->commands[0]->args[0]);
-	debug("secondo argomento? %s\n", l->commands[0]->args[1]);
-
-	int syntax_error = 0;
 	for (int i = 0; i < l->n_commands; i++)
 	{
 		if (strcmp(l->commands[i]->args[0], CD) == 0)
 		{
 			if (l->n_commands > 1)
 			{
-				printf("Error: 'cd' must be the only command of the line\n");
-				syntax_error = 1;
+				fprintf(stderr, "Error: 'cd' must be the only command of the line\n");
+				goto fail;
 			}
 			else if (l->commands[i]->in_pathname != NULL || l->commands[i]->out_pathname != NULL)
 			{
-				printf("Error: 'cd'  cannot have I/O redirections\n");
-				syntax_error = 1;
+				fprintf(stderr, "Error: 'cd' cannot have I/O redirections\n");
+				goto fail;
 			}
 			else if (l->commands[i]->n_args != 2)
 			{
-				printf("Error: 'cd' must have only one argument.\n");
-				syntax_error = 1;
-			}
-			if (syntax_error == 1)
-			{
-				return CHECK_FAILED;
+				fprintf(stderr, "Error: 'cd' must have only one argument.\n");
+				goto fail;
 			}
 		}
 	}
+	fail:
+		return CHECK_FAILED;
 	/*** TO BE DONE END ***/
 	return CHECK_OK;
 }
@@ -422,7 +414,7 @@ void execute_line(const line_t *const l)
 {
 	if (strcmp(CD, l->commands[0]->args[0]) == 0)
 	{
-		assert(l->n_commands == 1 && l->commands[0]->n_args == 2); // SEBA e ANDRE questo non serve perchè è già stato fatto in check_cd
+		assert(l->n_commands == 1 && l->commands[0]->n_args == 2);
 		change_current_directory(l->commands[0]->args[1]);
 		return;
 	}
@@ -466,7 +458,7 @@ void execute_line(const line_t *const l)
 			curr_stdout = fds[1];
 			next_stdin = fds[0];
 		}
-		run_child(c, curr_stdin, curr_stdout);
+		run_child(c, curr_stdin, curr_stdout); //! QUI
 		close_if_needed(curr_stdin);
 		close_if_needed(curr_stdout);
 	}
@@ -499,9 +491,9 @@ int main()
 		 */
 		/*** TO BE DONE START ***/
 		// Ottengo il pathname della directory corrente con getcwd
-		if ((pwd = getcwd(pwd, 0)) == NULL)
+		if ((pwd = getcwd(NULL, 0)) == NULL) {
 			fatal_errno("getcwd");
-
+		}
 		/*** TO BE DONE END ***/
 		pwd = my_realloc(pwd, strlen(pwd) + prompt_suffix_len + 1);
 		strcat(pwd, prompt_suffix);
