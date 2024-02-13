@@ -333,12 +333,16 @@ void wait_for_children()
 	{
 		if (WIFEXITED(status))
 		{ // Check if the child process ended normally
-			printf("Child process %d exited with status %d\n", pid, WEXITSTATUS(status));
+			printf("Child process %jd exited with status %d\n", (intmax_t)pid, WEXITSTATUS(status));
 		}
 		else if (WIFSIGNALED(status))
 		{ // Check if the child process was terminated by a signal
-			printf("Child process %d was terminated by signal %d: %s\n", pid, WTERMSIG(status), strsignal(WTERMSIG(status)));
+			printf("Child process %jd was terminated by signal %d: %s\n", (intmax_t)pid, WTERMSIG(status), strsignal(WTERMSIG(status)));
 		}
+	}
+	if (errno != ECHILD)
+	{
+		fatal_errno("wait");
 	}
 	/*** TO BE DONE END ***/
 }
@@ -376,20 +380,9 @@ void run_child(const command_t *const c, int c_stdin, int c_stdout)
 	{
 		redirect(c_stdin, STDIN_FILENO);
 		redirect(c_stdout, STDOUT_FILENO);
-		if (execvp(c->args[0], c->args) == NO_REDIR)
+		if (execvp(c->args[0], c->args) == -1)
 			fatal_errno("execvp");
-		// exit(0);
 	}
-	// SEBA e ANDRE questa va rimossa perchè viene chiamata
-	// una wait in wait_for_children per tutti i processi figli
-	/*
-	else
-	{
-		if (pid != waitpid(pid, NULL, 0))
-			fatal_errno("waitpid");
-		// wait_for_children();
-	}
-	*/
 	/*** TO BE DONE END ***/
 }
 
