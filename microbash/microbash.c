@@ -289,6 +289,7 @@ check_t check_cd(const line_t *const l)
 	/*** TO BE DONE START ***/
 	for (int i = 0; i < l->n_commands; i++)
 	{
+		
 		if (strcmp(l->commands[i]->args[0], CD) == 0)
 		{
 			if (l->n_commands > 1)
@@ -308,10 +309,12 @@ check_t check_cd(const line_t *const l)
 			}
 		}
 	}
+	// Abbiamo spostato dentro il to be done il return CHECK_OK per gestire il fail
+	return CHECK_OK;
 	fail:
+		debug("check_cd failed\n");
 		return CHECK_FAILED;
 	/*** TO BE DONE END ***/
-	return CHECK_OK;
 }
 
 void wait_for_children()
@@ -348,8 +351,7 @@ void redirect(int from_fd, int to_fd)
 	/*** TO BE DONE START ***/
 	if (from_fd != NO_REDIR && from_fd != to_fd)
 	{
-		int dup2_fd = dup2(from_fd, to_fd);
-		if (dup2_fd == -1 || dup2_fd != to_fd)
+		if (dup2(from_fd, to_fd) == -1)
 			fatal_errno("dup2 in redirect");
 		if (close(from_fd) == -1)
 			fatal_errno("close in redirect");
@@ -458,7 +460,7 @@ void execute_line(const line_t *const l)
 			curr_stdout = fds[1];
 			next_stdin = fds[0];
 		}
-		run_child(c, curr_stdin, curr_stdout); //! QUI
+		run_child(c, curr_stdin, curr_stdout);
 		close_if_needed(curr_stdin);
 		close_if_needed(curr_stdout);
 	}
