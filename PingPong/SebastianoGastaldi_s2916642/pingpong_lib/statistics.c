@@ -31,8 +31,8 @@ double timespec_delta2milliseconds(struct timespec *last,
 
 /*** TO BE DONE START ***/
 	
-	double mil= 1000;
-	double thous = 1000000;
+	double t= 1000;
+	double m = 1000000;
 	long long sec = last->tv_sec - previous->tv_sec;
 	long long nsec = last->tv_nsec - previous->tv_nsec;
 	if (nsec < 0) {
@@ -40,7 +40,7 @@ double timespec_delta2milliseconds(struct timespec *last,
 		nsec += 1000000000;
 	}
 	
-	return(((double)sec*mil) + ((double)nsec/thous));
+	return(((double)sec*t) + ((double)nsec/m));
 /*** TO BE DONE END ***/
 }
 
