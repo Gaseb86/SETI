@@ -35,6 +35,10 @@ double timespec_delta2milliseconds(struct timespec *last,
 	double thous = 1000000;
 	long long sec = last->tv_sec - previous->tv_sec;
 	long long nsec = last->tv_nsec - previous->tv_nsec;
+	if (nsec < 0) {
+		sec--;
+		nsec += 1000000000;
+	}
 	
 	return(((double)sec*mil) + ((double)nsec/thous));
 /*** TO BE DONE END ***/
