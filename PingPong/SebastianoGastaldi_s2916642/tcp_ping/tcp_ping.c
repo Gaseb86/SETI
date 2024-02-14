@@ -38,23 +38,20 @@ double do_ping(size_t msg_size, int msg_no, char message[msg_size], int tcp_sock
 
     /*** write msg_no at the beginning of the message buffer ***/
 /*** TO BE DONE START ***/
-
 	sprintf(message, "%d", msg_no ); 
 /*** TO BE DONE END ***/
 
     /*** Store the current time in send_time ***/
 /*** TO BE DONE START ***/
-
 	if (clock_gettime(CLOCK_TYPE, &send_time) < 0)
-		fail_errno(strerror(errno));//chiedere  lagorio
+		fail_errno(strerror(errno));
 /*** TO BE DONE END ***/
 
     /*** Send the message through the socket (blocking)  ***/
 /*** TO BE DONE START ***/
-
 	sent_bytes =  blocking_write_all(tcp_socket, message, msg_size);
-	if (sent_bytes < 0 || sent_bytes != msg_size)
-		fail_errno("Mesage sent has arrived incomplete");
+	if (sent_bytes != msg_size)
+		fail_errno("Message sent has arrived incomplete");
 /*** TO BE DONE END ***/
 
     /*** Receive answer through the socket (blocking) ***/
@@ -66,7 +63,6 @@ double do_ping(size_t msg_size, int msg_no, char message[msg_size], int tcp_sock
 
     /*** Store the current time in recv_time ***/
 /*** TO BE DONE START ***/
-	
 	if (clock_gettime(CLOCK_TYPE, &recv_time) < 0)
 		fail_errno(strerror(errno));
 /*** TO BE DONE END ***/
@@ -115,9 +111,7 @@ int main(int argc, char **argv)
 
     /*** call getaddrinfo() in order to get Pong Server address in binary form ***/
 /*** TO BE DONE START ***/
-
 	gai_rv = getaddrinfo(argv[1], argv[2], &gai_hints, &server_addrinfo);
-	
 	if (gai_rv != 0)
 		fail_errno(strerror(errno));	
 /*** TO BE DONE END ***/
@@ -134,7 +128,7 @@ int main(int argc, char **argv)
 		fail_errno("Problem with socket creation"); 
 	
 	
-	if (connect(tcp_socket,server_addrinfo->ai_addr , server_addrinfo->ai_addrlen ) == -1 )
+	if (connect(tcp_socket, server_addrinfo->ai_addr, server_addrinfo->ai_addrlen) == -1 )
 		fail_errno("Problem with socket connection");
 
 /*** TO BE DONE END ***/
